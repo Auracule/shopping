@@ -60,8 +60,15 @@ def contact(request):
     if request.method == 'POST': #persisting data to the db
         form = ContactForm(request.POST)
         if form.is_valid():
-            form.save()
+            news = form.save()
             messages.success(request, "Your message was sent successfully")
+            send_mail(
+                "Thank You",
+                "We got your message... and it will be attended to in due time",
+                settings.EMAIL_HOST_USER,
+                [news.email],
+                fail_silently=False,
+            )
             return redirect('index')
         else:
             messages.error(request, forms.errors)
